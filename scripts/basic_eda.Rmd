@@ -1,6 +1,8 @@
 ---
 title: "Seul Bike System"
-output: html_document
+output:
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
@@ -76,8 +78,15 @@ ggplot(sbd, aes(x = factor(hour), y = rented_bike_count)) +
        x = "Hora del día",
        y = "Rentas")
 
+daily|> ggplot(aes(x= seasons, y =daily_total)) +
+  geom_boxplot() +
+  labs(x = "Temporadas", y = "Rentas",
+       title= "Rentas diarias", subtitle = "Comparación estacional")
 
+temp <- group_by(daily, seasons) |> summarise(media = mean(daily_total), sd = sd(daily_total))
 
+knitr::kable(temp, caption = "Comportamiento estacional")
+rm(temp)
 ```
 
 
