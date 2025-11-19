@@ -1,0 +1,84 @@
+---
+title: "Seul Bike System"
+output: html_document
+---
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(here)
+
+here::i_am("scripts/basic_eda.Rmd")
+
+
+sbd <- read.csv( here::here("data/seul_bike_data.csv") )
+
+# Cambiar nombre de la variable
+colnames(sbd)[3] <- "hour"
+
+# Construct factors for categorical variables
+f_seasons = as.factor(sbd$seasons)
+levels(f_seasons) <- c("Spring","Summer","Autumn","Winter")
+
+sbd$seasons <- f_seasons
+
+f_holiday <- as.factor( sbd$holiday )
+sbd$holiday <- f_holiday
+
+f_functioning_day <- as.factor(sbd$functioning_day)
+sbd$functioning_day <- f_functioning_day
+
+f_hour <- as.factor(sbd$hour)
+sbd$hour <- f_hour 
+
+```
+
+# Análisis descriptivo
+
+***Caso de estudio: Seoul Bike Sharing Demand***
+
+La principal variable de interés es el número de bicicletas 
+rentadas. Tenemos información de 365 días y desglosada para 
+cada hora del día. Un primer abordaje para el análisis es sumarizar 
+el total de bicicletas rentadas para cada uno de los días
+
+```{r daily_data, echo=FALSE, message=FALSE, warning=FALSE}
+
+daily <- group_by(sbd, date, seasons, holiday, functioning_day) |>
+  summarise(daily_total = sum(rented_bike_count))
+
+summary(daily$daily_total)
+
+s <- summary(daily$daily_total)
+
+daily |> 
+  ggplot(aes(x = daily_total)) +
+  geom_boxplot()
+
+daily <- daily |> mutate(day = day(date))
+
+ggplot(daily, aes(x = factor(day), y = daily_total)) +
+  geom_boxplot() +
+  labs(title = "Rentas diarias por día del mes",
+       x = "Día del mes",
+       y = "Bicicletas rentadas")
+
+tabla_horas <- sbd |>
+  group_by(hour) |>
+  summarise(
+    media = mean(rented_bike_count, na.rm = TRUE),
+    desviacion_estandar = sd(rented_bike_count, na.rm = TRUE)
+  )
+
+ggplot(sbd, aes(x = factor(hour), y = rented_bike_count)) +
+  geom_boxplot() +
+  labs(title = "Rentas de bicicletas por hora",
+       x = "Hora del día",
+       y = "Rentas")
+
+
+
+```
+
+
+## 
