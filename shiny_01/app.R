@@ -44,10 +44,10 @@ server <- function(input, output) {
   
 }
 
-shinyApp(ui = ui, server = server)
+#shinyApp(ui = ui, server = server)
 
 
-#runApp("shiny_01")
+runApp("shiny_01")
 
 
 
