@@ -4,6 +4,8 @@ library(shinydashboard)
 library(shiny)
 library(xtable)
 library(DT)
+library(bslib)
+
 
 
 rm(list=ls())
